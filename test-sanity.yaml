@@ -36,7 +36,7 @@ spec:
         description: Owner of the component
         ui:field: HarnessOwnerPicker
         ui:options:
-          filterByCurrentUserMembership: true
+          filterByCurrentUserMembership: false
   steps:
   - id: triggerOne
     name: Creating your appication one
@@ -54,7 +54,3 @@ spec:
       inputset:
         status: ${{ parameters.status }}
       apikey: ${{ parameters.token }}
-metadata:
-  description: ddxsd
-  tags:
-  - bn
