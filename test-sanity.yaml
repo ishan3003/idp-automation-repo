@@ -37,6 +37,29 @@ spec:
         ui:field: HarnessOwnerPicker
         ui:options:
           filterByCurrentUserMembership: false
+      title: Project Identifier
+      description: Harness Project Identifier
+      type: string
+      ui:field: HarnessProjectPicker
+      org_id_auto:
+        title: Org Identifier
+        description: Harness Organization Identifier from Project
+        type: string
+        ui:field: HarnessAutoOrgPicker
+        dependencies:
+          projectPickerRef:
+          - project_id
+      userGroup:
+        title: Owner
+        type: string
+        description: Owner of the component
+        ui:field: HarnessUserGroupPicker
+        dependencies:
+          orgPickerKey: org_id_auto
+          projectPickerKey: project_id
+        ui:options:
+          includeChildScopes: true
+          filterByUserMembership: true
   steps:
   - id: triggerOne
     name: Creating your appication one
