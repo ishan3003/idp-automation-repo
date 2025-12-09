@@ -60,7 +60,7 @@ spec:
           projectPickerKey: project_id
         ui:options:
           includeChildScopes: true
-          filterByUserMembership: true
+          filterByCurrentUserMembership: true
   steps:
   - id: triggerOne
     name: Creating your appication one
