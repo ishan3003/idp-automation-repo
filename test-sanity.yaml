@@ -37,10 +37,11 @@ spec:
         ui:field: HarnessOwnerPicker
         ui:options:
           filterByCurrentUserMembership: false
-      title: Project Identifier
-      description: Harness Project Identifier
-      type: string
-      ui:field: HarnessProjectPicker
+      project_id:
+        title: Project Identifier
+        description: Harness Project Identifier
+        type: string
+        ui:field: HarnessProjectPicker
       org_id_auto:
         title: Org Identifier
         description: Harness Organization Identifier from Project
