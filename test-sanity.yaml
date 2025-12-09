@@ -1,0 +1,53 @@
+apiVersion: harness.io/v1
+kind: Workflow
+type: workflow
+identifier: ishantestworkflow
+name: ishan-test-workflow
+owner: group:account/_test_underscore_group
+orgIdentifier: IDP
+projectIdentifier: Deepesh_CDE
+spec:
+  output:
+    links:
+    - title: Pipeline Details
+      url: ${{ steps.trigger.output.PipelineUrl }}
+  presentation:
+    customTitle: Deploy Your Application
+    customSubTitle: Deploy Your Application to AWS/Azure/GCP
+    customCreateButtonText: Deploy Now
+  lifecycle: test
+  parameters:
+  - title: Service Details
+    required:
+    - status
+    properties:
+      token:
+        title: Harness Token
+        type: string
+        ui:widget: password
+        ui:field: HarnessAuthToken
+      status:
+        title: Status
+        type: string
+        description: Status
+  steps:
+  - id: triggerOne
+    name: Creating your appication one
+    action: trigger:harness-custom-pipeline
+    input:
+      url: https://qa.harness.io/ng/account/zEaak-FLS425IEO7OLzMUg/module/cd/orgs/default/projects/Deepesh_CDE/pipelines/stagefailtest/pipeline-studio/?storeType=INLINE
+      inputset:
+        status: pass
+      apikey: ${{ parameters.token }}
+  - id: triggertwo
+    name: Creating your appication two
+    action: trigger:harness-custom-pipeline
+    input:
+      url: https://qa.harness.io/ng/account/zEaak-FLS425IEO7OLzMUg/module/cd/orgs/default/projects/Deepesh_CDE/pipelines/stagefailtest/pipeline-studio/?storeType=INLINE
+      inputset:
+        status: ${{ parameters.status }}
+      apikey: ${{ parameters.token }}
+metadata:
+  description: ddxsd
+  tags:
+  - bn
