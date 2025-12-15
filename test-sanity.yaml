@@ -21,15 +21,16 @@ spec:
     required:
     - status
     properties:
-      title: Volume Type
-      type: string
-      description: The volume type to be used
-      default: Cold HDD
-      enum:
-      - Provisioned IOPS
-      - Cold HDD
-      - Throughput Optimized HDD
-      - Magnetic
+      volume:
+        title: Volume Type
+        type: string
+        description: The volume type to be used
+        default: Cold HDD
+        enum:
+        - Provisioned IOPS
+        - Cold HDD
+        - Throughput Optimized HDD
+        - Magnetic
       status:
         title: Status
         type: string
