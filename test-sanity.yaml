@@ -21,6 +21,13 @@ spec:
     required:
     - status
     properties:
+      entity:
+        title: Entity
+        type: string
+        description: Entity of the component
+        ui:field: EntityFieldPicker
+        ui:options:
+          allowArbitraryValues: true
       token:
         title: Harness Token
         type: string
