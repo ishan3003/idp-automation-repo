@@ -27,7 +27,9 @@ spec:
         description: Entity of the component
         ui:field: EntityFieldPicker
         ui:options:
-          allowArbitraryValues: true
+          catalogFilter:
+          - kind: Group
+            spec.type: team
       token:
         title: Harness Token
         type: string
