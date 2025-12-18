@@ -33,7 +33,7 @@ spec:
       url: https://qa.harness.io/ng/account/zEaak-FLS425IEO7OLzMUg/module/cd/orgs/default/projects/Deepesh_CDE/pipelines/stagefailtest/pipeline-studio/?storeType=INLINE
       inputset:
         status: pass
-      apiKeySecret: ${secrets.testautoidp.WORKFLOW-SECRET}
+      apiKeySecret: ${secrets.Workflow_Secret}
   - id: triggertwo
     name: Creating your appication two
     action: trigger:harness-custom-pipeline
@@ -41,7 +41,7 @@ spec:
       url: https://qa.harness.io/ng/account/zEaak-FLS425IEO7OLzMUg/module/cd/orgs/default/projects/Deepesh_CDE/pipelines/stagefailtest/pipeline-studio/?storeType=INLINE
       inputset:
         status: ${{ parameters.status }}
-      apiKeySecret: ${secrets.testautoidp.WORKFLOW-SECRET}
+      apiKeySecret: ${secrets.Workflow_Secret}
 metadata:
   description: ddxsd
   tags:
