@@ -2,7 +2,7 @@ apiVersion: harness.io/v1
 kind: System
 type: test-system
 identifier: idpautomationsystem17695236584363882
-name: idp-automation-system-1769523658436-3882
+name: idp-automation-system-1769523658542-UPDATED
 owner: user:account/idp-release-automation-ui@harnessioprivate.testinator.com
 spec:
   lifecycle: ''
