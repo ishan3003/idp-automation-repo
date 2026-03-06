@@ -1,0 +1,631 @@
+apiVersion: harness.io/v1
+kind: Workflow
+type: service
+identifier: comprehensive_widget_test
+name: ComprehensiveWidgetTestTemplate
+owner: platform_team
+spec:
+  output:
+    links:
+    - title: Open README
+      url: https://example.com
+  parameters:
+  - title: 'Step 1: Core Text Inputs & Validation'
+    description: Tests all text-type widgets with live validation and constraints.
+    required:
+    - serviceName
+    - ownerEmail
+    - repoUrl
+    - description
+    - replicas
+    properties:
+      serviceName:
+        title: Service Name
+        type: string
+        description: Alphanumeric + hyphens, 3-63 chars. Tests minLength/maxLength/pattern.
+        minLength: 3
+        maxLength: 63
+        pattern: ^[a-z][a-z0-9-]*[a-z0-9]$
+      ownerEmail:
+        title: Owner Email
+        type: string
+        description: Tests HarnessEmailWidget with format validation.
+        format: email
+      repoUrl:
+        title: Repository URL
+        type: string
+        description: Tests HarnessURLWidget with format validation.
+        format: uri
+      description:
+        title: Description
+        type: string
+        description: Tests HarnessTextareaWidget with ui:widget=textarea and custom
+          rows.
+      replicas:
+        title: Replica Count
+        type: integer
+        description: Tests HarnessUpDownWidget with min/max/step.
+        minimum: 1
+        maximum: 20
+        default: 3
+        multipleOf: 1
+    ui:order:
+    - serviceName
+    - ownerEmail
+    - repoUrl
+    - description
+    - secretToken
+    - replicas
+    ui:options:
+      displayTitle: true
+    ui:
+      serviceName:
+        ui:autofocus: true
+        ui:placeholder: e.g. my-cool-service
+        ui:help: Must start with a letter, end with alphanumeric.
+      ownerEmail:
+        ui:widget: email
+        ui:placeholder: owner@company.com
+      repoUrl:
+        ui:widget: uri
+        ui:placeholder: https://github.com/org/repo
+      description:
+        ui:widget: textarea
+        ui:options:
+          rows: 4
+        ui:placeholder: Describe your service...
+      secretToken:
+        ui:widget: password
+        ui:placeholder: paste token here
+      replicas:
+        ui:widget: updown
+  - title: 'Step 2: Selection & Specialty Widgets'
+    description: Tests select, checkbox, checkboxes, radio, range, and color widgets.
+    required:
+    - environment
+    - enableMonitoring
+    - cloudProviders
+    - logLevel
+    properties:
+      environment:
+        title: Environment
+        type: string
+        description: Tests HarnessSelectWidget with enum options.
+        enum:
+        - development
+        - staging
+        - production
+        enumNames:
+        - Development
+        - Staging
+        - Production
+        default: development
+      enableMonitoring:
+        title: Enable Monitoring
+        type: boolean
+        description: Tests HarnessCheckboxWidget.
+        default: true
+      cloudProviders:
+        title: Cloud Providers
+        type: array
+        description: Tests HarnessCheckboxesWidget (multi-select checkboxes).
+        default: []
+        items:
+          type: string
+          enum:
+          - aws
+          - gcp
+          - azure
+        uniqueItems: true
+      logLevel:
+        title: Log Level
+        type: string
+        description: Tests HarnessRadioWidget.
+        enum:
+        - debug
+        - info
+        - warn
+        - error
+        default: info
+      cpuLimit:
+        title: CPU Limit (millicores)
+        type: integer
+        description: Tests HarnessRangeWidget with min/max/step.
+        minimum: 100
+        maximum: 4000
+        multipleOf: 100
+        default: 500
+      brandColor:
+        title: Brand Color
+        type: string
+        description: Tests HarnessColorWidget.
+        default: '#4F46E5'
+    ui:order:
+    - environment
+    - enableMonitoring
+    - cloudProviders
+    - logLevel
+    - cpuLimit
+    - brandColor
+    ui:
+      environment:
+        ui:widget: select
+        ui:placeholder: Choose environment...
+      enableMonitoring:
+        ui:widget: checkbox
+      cloudProviders:
+        ui:widget: checkboxes
+      logLevel:
+        ui:widget: radio
+      cpuLimit:
+        ui:widget: range
+      brandColor:
+        ui:widget: color
+  - title: 'Step 3: Date, Time & File Widgets'
+    description: Tests date, datetime, time, and file upload widgets.
+    required:
+    - targetDate
+    properties:
+      targetDate:
+        title: Target Launch Date
+        type: string
+        description: Tests HarnessDateWidget.
+        format: date
+      deploymentWindow:
+        title: Deployment Window Start
+        type: string
+        description: Tests HarnessDateTimeWidget.
+        format: date-time
+      maintenanceTime:
+        title: Daily Maintenance Time
+        type: string
+        description: Tests HarnessTimeWidget.
+        format: time
+      configUpload:
+        title: Config File Upload
+        type: string
+        description: Tests HarnessFileWidget (single file).
+        format: data-url
+      multiFileUpload:
+        title: Certificate Files
+        type: array
+        description: Tests HarnessFileWidget with multiple files.
+        items:
+          type: string
+          format: data-url
+    ui:order:
+    - targetDate
+    - deploymentWindow
+    - maintenanceTime
+    - configUpload
+    - multiFileUpload
+    ui:
+      targetDate:
+        ui:widget: date
+      deploymentWindow:
+        ui:widget: date-time
+      maintenanceTime:
+        ui:widget: time
+  - title: 'Step 4: Dependencies & Conditional Rendering'
+    description: Tests dependencies, if/then/else, and conditional field visibility.
+    required:
+    - deploymentType
+    properties:
+      deploymentType:
+        title: Deployment Type
+        type: string
+        enum:
+        - kubernetes
+        - serverless
+        - vm
+        enumNames:
+        - Kubernetes
+        - Serverless (Lambda/CloudRun)
+        - Virtual Machine
+      enableHA:
+        title: Enable High Availability
+        type: boolean
+        default: false
+    dependencies:
+      deploymentType:
+        oneOf:
+        - properties:
+            deploymentType:
+              const: kubernetes
+            clusterName:
+              title: Kubernetes Cluster
+              type: string
+              minLength: 1
+            namespace:
+              title: Namespace
+              type: string
+              default: default
+            helmChartVersion:
+              title: Helm Chart Version
+              type: string
+              pattern: ^\d+\.\d+\.\d+$
+          required:
+          - clusterName
+          - namespace
+        - properties:
+            deploymentType:
+              const: serverless
+            functionRuntime:
+              title: Runtime
+              type: string
+              enum:
+              - nodejs20.x
+              - python3.12
+              - go1.x
+              - java21
+            memorySize:
+              title: Memory (MB)
+              type: integer
+              minimum: 128
+              maximum: 10240
+              default: 256
+              multipleOf: 64
+          required:
+          - functionRuntime
+        - properties:
+            deploymentType:
+              const: vm
+            machineType:
+              title: Machine Type
+              type: string
+              enum:
+              - t3.micro
+              - t3.small
+              - t3.medium
+              - t3.large
+              default: t3.small
+            diskSizeGb:
+              title: Disk Size (GB)
+              type: integer
+              minimum: 10
+              maximum: 1000
+              default: 50
+          required:
+          - machineType
+      enableHA:
+        oneOf:
+        - properties:
+            enableHA:
+              const: false
+        - properties:
+            enableHA:
+              const: true
+            haConfig:
+              title: HA Configuration
+              type: object
+              properties:
+                minReplicas:
+                  title: Min Replicas
+                  type: integer
+                  minimum: 2
+                  default: 2
+                maxReplicas:
+                  title: Max Replicas
+                  type: integer
+                  minimum: 2
+                  maximum: 50
+                  default: 5
+                targetCpuPercent:
+                  title: Target CPU %
+                  type: integer
+                  minimum: 10
+                  maximum: 95
+                  default: 70
+              required:
+              - minReplicas
+              - maxReplicas
+    ui:order:
+    - deploymentType
+    - clusterName
+    - namespace
+    - helmChartVersion
+    - functionRuntime
+    - memorySize
+    - machineType
+    - diskSizeGb
+    - enableHA
+    - haConfig
+    ui:
+      deploymentType:
+        ui:widget: select
+        ui:placeholder: Select deployment type...
+      memorySize:
+        ui:widget: updown
+      diskSizeGb:
+        ui:widget: updown
+      helmChartVersion:
+        ui:placeholder: e.g. 1.2.3
+      haConfig:
+        targetCpuPercent:
+          ui:widget: range
+  - title: 'Step 5: anyOf, allOf, Arrays & Nested Objects'
+    description: Tests anyOf branch selection, allOf composition, array operations,
+      and nested object rendering.
+    required:
+    - projectMeta
+    - tags
+    properties:
+      projectId:
+        title: Project ID
+        allOf:
+        - type: string
+          minLength: 3
+        - type: string
+          maxLength: 30
+        - type: string
+          pattern: ^[a-z][a-z0-9_]*$
+        description: Tests allOf — 3 constraints merged. Lowercase, underscores, 3-30
+          chars.
+      notificationConfig:
+        title: Notification Channel
+        description: Tests anyOf — user picks Slack OR Email OR PagerDuty.
+        anyOf:
+        - title: Slack
+          type: object
+          properties:
+            channel:
+              title: Slack Channel
+              type: string
+              pattern: ^#[a-z0-9_-]+$
+            webhookUrl:
+              title: Webhook URL
+              type: string
+              format: uri
+          required:
+          - channel
+          - webhookUrl
+        - title: Email
+          type: object
+          properties:
+            recipients:
+              title: Email Recipients
+              type: string
+              format: email
+            sendOnSuccess:
+              title: Send on Success
+              type: boolean
+              default: false
+          required:
+          - recipients
+        - title: PagerDuty
+          type: object
+          properties:
+            serviceKey:
+              title: PagerDuty Service Key
+              type: string
+              minLength: 32
+              maxLength: 32
+            severity:
+              title: Severity
+              type: string
+              enum:
+              - critical
+              - error
+              - warning
+              - info
+              default: error
+          required:
+          - serviceKey
+      projectMeta:
+        title: Project Metadata
+        type: object
+        description: Tests HarnessObjectFieldTemplate — renders as nested Card.
+        required:
+        - teamName
+        - costCenter
+        properties:
+          teamName:
+            title: Team Name
+            type: string
+            minLength: 2
+          costCenter:
+            title: Cost Center
+            type: string
+            description: 'Format: CC-1234'
+            pattern: ^CC-\d{4}$
+          jiraProject:
+            title: JIRA Project Key
+            type: string
+          contactInfo:
+            title: Contact Info
+            type: object
+            description: Tests double-nested object — inner Card.
+            properties:
+              slackChannel:
+                title: Team Slack Channel
+                type: string
+              onCallRotation:
+                title: On-Call Rotation URL
+                type: string
+                format: uri
+      tags:
+        title: Tags
+        type: array
+        description: Tests HarnessArrayFieldTemplate with string items, min 1.
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+          minLength: 1
+      endpoints:
+        title: API Endpoints
+        type: array
+        description: Tests HarnessArrayFieldTemplate with object items (add/remove/reorder).
+        items:
+          type: object
+          required:
+          - path
+          - method
+          properties:
+            path:
+              title: Path
+              type: string
+              pattern: ^/[a-z0-9/_-]*$
+            method:
+              title: HTTP Method
+              type: string
+              enum:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+            authRequired:
+              title: Auth Required
+              type: boolean
+              default: true
+        default:
+        - path: /health
+          method: GET
+          authRequired: false
+    ui:order:
+    - projectId
+    - notificationConfig
+    - projectMeta
+    - tags
+    - endpoints
+    ui:
+      projectId:
+        ui:placeholder: e.g. my_project_01
+      notificationConfig:
+        channel:
+          ui:placeholder: '#my-channel'
+        webhookUrl:
+          ui:placeholder: https://hooks.slack.com/...
+        recipients:
+          ui:widget: email
+          ui:placeholder: alerts@company.com
+        serviceKey:
+          ui:placeholder: 32-character PagerDuty key
+      projectMeta:
+        costCenter:
+          ui:placeholder: CC-1234
+        jiraProject:
+          ui:placeholder: PROJ
+      tags:
+        items:
+          ui:placeholder: Enter a tag...
+  - title: 'Step 6: if/then/else & Advanced Conditions'
+    description: Tests if/then/else conditional schema with multi-level branching.
+    required:
+    - databaseRequired
+    properties:
+      databaseRequired:
+        title: Does this service need a database?
+        type: boolean
+        default: false
+    if:
+      properties:
+        databaseRequired:
+          const: true
+    then:
+      required:
+      - dbEngine
+      properties:
+        dbEngine:
+          title: Database Engine
+          type: string
+          enum:
+          - postgresql
+          - mysql
+          - mongodb
+          enumNames:
+          - PostgreSQL
+          - MySQL
+          - MongoDB
+        dbConfig:
+          title: Database Configuration
+          type: object
+          properties:
+            host:
+              title: Host
+              type: string
+              default: localhost
+            port:
+              title: Port
+              type: integer
+              minimum: 1
+              maximum: 65535
+            databaseName:
+              title: Database Name
+              type: string
+              minLength: 1
+            enableSSL:
+              title: Enable SSL
+              type: boolean
+              default: true
+          required:
+          - host
+          - port
+          - databaseName
+      if:
+        properties:
+          dbEngine:
+            const: postgresql
+      then:
+        properties:
+          pgConfig:
+            title: PostgreSQL-Specific Config
+            type: object
+            properties:
+              maxConnections:
+                title: Max Connections
+                type: integer
+                minimum: 5
+                maximum: 500
+                default: 100
+              statementTimeout:
+                title: Statement Timeout (ms)
+                type: integer
+                minimum: 1000
+                default: 30000
+    else:
+      properties:
+        cacheLayer:
+          title: Cache Layer (no DB selected)
+          type: string
+          enum:
+          - redis
+          - memcached
+          - none
+          default: none
+    ui:order:
+    - databaseRequired
+    - dbEngine
+    - dbConfig
+    - pgConfig
+    - cacheLayer
+    ui:
+      databaseRequired:
+        ui:widget: checkbox
+      dbEngine:
+        ui:widget: select
+        ui:placeholder: Select database engine...
+      dbConfig:
+        port:
+          ui:widget: updown
+      pgConfig:
+        maxConnections:
+          ui:widget: updown
+        statementTimeout:
+          ui:widget: updown
+      cacheLayer:
+        ui:widget: radio
+  steps:
+  - id: log
+    name: Log Parameters
+    action: debug:log
+    input:
+      message: Template executed successfully with all parameters.
+metadata:
+  description: |
+    A template that exercises every RJSF widget, validation rule, dependency, conditional, anyOf/allOf, nested object, and array supported by the Harness IDP scaffolder.
+  tags:
+  - test
+  - validation
+  - widgets
