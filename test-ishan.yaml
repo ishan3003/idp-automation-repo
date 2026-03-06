@@ -146,20 +146,6 @@ spec:
     - logLevel
     - cpuLimit
     - brandColor
-    ui:
-      environment:
-        ui:widget: select
-        ui:placeholder: Choose environment...
-      enableMonitoring:
-        ui:widget: checkbox
-      cloudProviders:
-        ui:widget: checkboxes
-      logLevel:
-        ui:widget: radio
-      cpuLimit:
-        ui:widget: range
-      brandColor:
-        ui:widget: color
   - title: 'Step 3: Date, Time & File Widgets'
     description: Tests date, datetime, time, and file upload widgets.
     required:
