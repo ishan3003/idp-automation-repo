@@ -109,7 +109,6 @@ spec:
         title: Cloud Providers
         type: array
         description: Tests HarnessCheckboxesWidget (multi-select checkboxes).
-        default: []
         items:
           type: string
           enum:
