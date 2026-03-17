@@ -1,0 +1,12 @@
+apiVersion: harness.io/v1
+kind: System
+type: test-system
+identifier: idpautomationsystem17737486093012683
+name: idp-automation-system-1773748609301-2683
+owner: user:account/idp-release-automation-ui@harnessioprivate.testinator.com
+spec:
+  lifecycle: ''
+metadata:
+  description: Test IDP System CRUD Operation
+  tags:
+  - java
