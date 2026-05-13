@@ -1,0 +1,14 @@
+apiVersion: harness.io/v1
+kind: customkindfordemo
+type: service
+identifier: TestCustomEntityKindGitX
+name: TestCustomEntityKindGitX
+owner: group:account/AI_Test_Automation
+orgIdentifier: default
+projectIdentifier: IDP
+spec:
+  lifecycle: experimental
+metadata:
+  description: Test
+  tags:
+  - java
